@@ -1,0 +1,62 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# dotenv environment variables
+.env
+.env.local
+.env.*.local
+
+# TypeScript build output
+dist/
+build/
+tsbuildinfo
+*.tsbuildinfo
+
+# Cache
+.cache/
+.next/
+.nyc_output/
+coverage/
+tmp/
+temp/
+*.swp
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Docker artifacts
+docker-compose.override.yml
+docker-compose.dev.yml
+
+# Swagger generated files (if applicable)
+swagger.json
+swagger.yaml
+
+# Redis dump (if using local persistence)
+dump.rdb
+
+# MongoDB local database files (just in case)
+*.mongodb
+
+# OS generated files
+.DS_Store
+Thumbs.db
