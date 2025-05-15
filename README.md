@@ -94,3 +94,61 @@ A multi-tenant SaaS application (like a lightweight Asana or ClickUp) for projec
     GitHub Actions for CI/CD
 
     Swagger / OpenAPI docs
+
+
+
+
+
+
+
+ interfaces/
+│   │   ├── IRequest.ts
+│   │   ├── IJwtPayload.ts
+│   │   ├── IRole.ts
+│   │   └── index.ts
+│
+│   ├── utils/
+│   │   ├── mailer.ts             # Email logic (SendGrid/Nodemailer)
+│   │   ├── token.ts              # JWT generator, password hash/compare
+│   │   ├── logger.ts
+│   │   ├── slugify.ts
+│   │   └── helpers.ts
+│
+│   ├── jobs/
+│   │   ├── queue.ts              # BullMQ queue setup
+│   │   ├── emailProcessor.ts
+│   │   └── cleanupProcessor.ts   # e.g. deleting stale notifications
+│
+│   ├── constants/
+│   │   ├── roles.ts
+│   │   ├── permissions.ts
+│   │   └── statusCodes.ts
+│
+│   ├── seeders/
+│   │   └── seed.ts               # Preload roles, tenants, admin users
+│
+│   ├── index.ts                  # Entry file
+│   └── app.ts                    # Express config
+│
+├── test/
+│   ├── auth.test.ts
+│   ├── tenant.test.ts
+│   ├── project.test.ts
+│   ├── user.test.ts
+│   └── setup.ts
+│
+├── .env
+├── .env.sample
+├── tsconfig.json
+├── .gitignore
+├── Dockerfile
+├── docker-compose.yml
+├── swagger.json
+├── package.json
+└── .github/
+    └── workflows/
+        └── ci.yml
+
+
+
+

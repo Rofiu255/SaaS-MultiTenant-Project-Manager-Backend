@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as taskController from '../controllers/task.controller';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { tenantMiddleware } from '../middleware/multiTenantMiddleware';
+import { multiTenantMiddleware } from '../middleware/multiTenantMiddleware';
 import { validate } from '../middleware/validateMiddleware';
 import {
   createTaskSchema,
@@ -10,8 +10,10 @@ import {
 
 const router = Router();
 
-router.use(authMiddleware, tenantMiddleware);
+// Middleware for auth and tenant context
+router.use(authMiddleware, multiTenantMiddleware);
 
+// Routes
 router.post('/', validate(createTaskSchema), taskController.createTask);
 router.get('/', taskController.getAllTasks);
 router.get('/:id', taskController.getTaskById);
