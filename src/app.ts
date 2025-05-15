@@ -1,4 +1,3 @@
-// src/app.ts
 import express, { Application, Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -13,8 +12,7 @@ import { taskRoutes } from './routes/task.routes';
 import { settingsRoutes } from './routes/settings.routes';
 import { errorHandler } from './middleware/errorHandler';
 import { rateLimiter } from './middleware/rateLimiter';
-import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from './config/swagger';
+import { setupSwagger } from './config/swagger';
 
 const app: Application = express();
 
@@ -33,7 +31,7 @@ if (NODE_ENV === 'development') {
 app.use(rateLimiter);
 
 // Swagger Docs
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+setupSwagger(app);
 
 // Routes
 app.use('/api/auth', authRoutes);
