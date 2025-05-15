@@ -1,26 +1,35 @@
-import { Response } from 'express';
-import { createTenantService, getTenantService } from '../services/tenant.service';
+import { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
+import { TenantModel } from '../models/Tenant';
 import { TenantRequest } from '../middleware/multiTenantMiddleware';
 
-export const createTenant = asyncHandler(async (req: TenantRequest, res: Response) => {
-  // Destructure body for name and ownerEmail if necessary
-  const { name, ownerEmail } = req.body;
-  
-  // Call the service to create a tenant
-  const tenant = await createTenantService({ name, ownerEmail });
-  
-  // Return the created tenant in response
-  res.status(201).json({ message: 'Tenant created', tenant });
+// Create Tenant
+export const createTenant = asyncHandler(async (req: Request, res: Response) => {
+  const { name, domain } = req.body;
+  const tenant = await TenantModel.create({ name, domain });
+  res.status(201).json({ tenant });
 });
 
-export const getTenant = asyncHandler(async (req: TenantRequest, res: Response) => {
-  // Use tenantId from the middleware
+// Get My Tenant
+export const getMyTenant = asyncHandler(async (req: TenantRequest, res: Response) => {
   const tenantId = req.tenantId;
-
-  // Call the service to retrieve the tenant by ID
-  const tenant = await getTenantService(tenantId);
-
-  // Return the tenant in the response
+  const tenant = await TenantModel.findById(tenantId);
+  if (!tenant) {
+    return res.status(404).json({ message: 'Tenant not found' });
+  }
   res.status(200).json({ tenant });
+});
+
+// Update Tenant
+export const updateTenant = asyncHandler(async (req: TenantRequest, res: Response) => {
+  const tenantId = req.tenantId;
+  const updated = await TenantModel.findByIdAndUpdate(tenantId, req.body, { new: true });
+  res.status(200).json({ tenant: updated });
+});
+
+// Delete Tenant
+export const deleteTenant = asyncHandler(async (req: TenantRequest, res: Response) => {
+  const tenantId = req.tenantId;
+  await TenantModel.findByIdAndDelete(tenantId);
+  res.status(204).send();
 });

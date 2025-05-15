@@ -2,7 +2,7 @@
 import { Worker } from 'bullmq';
 import { REDIS_URL } from '../config/env';
 import { logger } from '../utils/logger';
-import NotificationModel from '../models/Notification';
+import { NotificationModel } from '../models/Notification';
 
 
 interface CleanupJobData {
@@ -20,11 +20,11 @@ export const cleanupWorker = new Worker<CleanupJobData>(
 
     switch (type) {
       case 'notifications':
-        await NotificationModel.deleteMany({
+        await NotificationModel(tenantId).deleteMany({
           tenantId,
           read: true,
-          createdAt: { $lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }, // older than 7 days
-        });
+          createdAt: { $lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+        });        
         break;
 
       case 'tempFiles':

@@ -32,10 +32,16 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const { token, user } = await loginService({ email, password });
+  const tenantId = (req as TenantRequest).tenantId;
+  if (!tenantId) {
+    return res.status(400).json({ message: 'Tenant ID is required' });
+  }
+
+  const { token, user } = await loginService({ email, password, tenantId });
 
   res.status(200).json({ token, user });
 });
+
 
 export const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
     const { email } = req.body;
