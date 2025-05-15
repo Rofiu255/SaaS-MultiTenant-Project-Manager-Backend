@@ -5,24 +5,27 @@ import { BadRequestError } from '../utils/errors';
  * Extends the Express Request interface to include tenantId.
  */
 export interface TenantRequest extends Request {
-  tenantId: string;
+  tenantId: string;  // Ensure tenantId is included in the request
 }
 
 /**
- * Middleware to resolve tenant ID from request headers.
- * Expects 'x-tenant-id' header to be present in the request.
+ * Middleware to extract tenant ID from headers and attach it to the request object.
  */
 export const multiTenantMiddleware = (
-  req: TenantRequest,
+  req: Request,  // Use base Request type
   res: Response,
   next: NextFunction
 ): void => {
   const tenantId = req.headers['x-tenant-id'];
 
+  // Validate that tenantId exists and is of type string
   if (!tenantId || typeof tenantId !== 'string') {
     return next(new BadRequestError('Tenant ID is missing or invalid in the request headers.'));
   }
 
-  req.tenantId = tenantId;
+  // Attach tenantId to the request object and cast it to TenantRequest
+  (req as TenantRequest).tenantId = tenantId;
+
+  // Proceed to the next middleware
   next();
 };

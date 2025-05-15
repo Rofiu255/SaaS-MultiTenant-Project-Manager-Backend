@@ -1,24 +1,23 @@
 // seeders/seed.ts
-
 import mongoose from 'mongoose';
 import { MONGO_URI } from '../config/env';
-import User from '../models/User';
-import Tenant from '../models/Tenant';
+import { UserModel } from '../models/User';   // ✅ import function to resolve tenant user model
+import { TenantModel } from '../models/Tenant'; // ✅ you'll need to expose this too
 import { Roles } from '../constants/roles';
 import { logger } from '../utils/logger';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
+
 
 const seed = async () => {
   try {
     await mongoose.connect(MONGO_URI);
     logger.info('Connected to MongoDB');
 
-    // 1. Create default tenant
     const tenantSlug = 'main-org';
-    let tenant = await Tenant.findOne({ slug: tenantSlug });
+    let tenant = await TenantModel.findOne({ slug: tenantSlug });
 
     if (!tenant) {
-      tenant = await Tenant.create({
+      tenant = await TenantModel.create({
         name: 'Main Organization',
         slug: tenantSlug,
         isActive: true,
@@ -26,20 +25,21 @@ const seed = async () => {
       logger.info('Seeded tenant: Main Organization');
     }
 
-    // 2. Create super admin user
     const adminEmail = 'admin@main.org';
+    const User = UserModel(tenant._id.toString()); // ✅ resolve tenant user model
+
     const existingAdmin = await User.findOne({ email: adminEmail });
 
     if (!existingAdmin) {
       const hashedPassword = await bcrypt.hash('admin123', 10);
 
       await User.create({
-        tenantId: tenant._id,
+        name: 'Super Admin',
         email: adminEmail,
         password: hashedPassword,
         role: Roles.SUPER_ADMIN,
-        fullName: 'Super Admin',
-        isActive: true,
+        tenantId: tenant._id.toString(),
+        createdAt: new Date(),
       });
 
       logger.info('Seeded super admin user');
@@ -52,5 +52,6 @@ const seed = async () => {
     process.exit(1);
   }
 };
+
 
 seed();
